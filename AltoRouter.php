@@ -1,15 +1,17 @@
 <?php
-/*
-MIT License
-
-Copyright (c) 2012 Danny van Kooten <hi@dannyvankooten.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+	/*
+	MIT License
+	 
+	Copyright (c) 2019 Ajay Kwatra <ajaykwatra@gmail.com>
+	
+	Copyright (c) 2012 Danny van Kooten <hi@dannyvankooten.com>
+	 
+	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+	 
+	The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+	 
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+	*/
 
 class AltoRouter {
 
@@ -40,6 +42,8 @@ class AltoRouter {
 		''   => '[^/\.]++'
 	);
 
+	public $db;
+
 	/**
 	  * Create router in one call from config.
 	  *
@@ -48,6 +52,7 @@ class AltoRouter {
 	  * @param array $matchTypes
 	  */
 	public function __construct( $routes = array(), $basePath = '', $matchTypes = array() ) {
+
 		$this->addRoutes($routes);
 		$this->setBasePath($basePath);
 		$this->addMatchTypes($matchTypes);
@@ -110,7 +115,13 @@ class AltoRouter {
 	 * @throws Exception
 	 */
 	public function map($method, $route, $target, $name = null) {
-
+		
+		## AK - to fix trailing slash issue ##
+		 # append '/' to end of every uri
+		$route_slash = substr($route, -1);
+		$route = ($route_slash != '/') ? $route . '/' : $route;
+		## AK - to fix trailing slash issue ##
+	
 		$this->routes[] = array($method, $route, $target, $name);
 
 		if($name) {
@@ -190,6 +201,12 @@ class AltoRouter {
 			$requestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
 		}
 
+		## AK - to fix trailing slash issue ##
+		 # append '/' to end of every uri
+		$route_slash = substr($requestUrl, -1); 
+		$requestUrl = ($route_slash != '/') ? $requestUrl . '/' : $requestUrl;
+		## AK - to fix trailing slash issue ##
+		
 		// strip base path from request url
 		$requestUrl = substr($requestUrl, strlen($this->basePath));
 
@@ -283,5 +300,17 @@ class AltoRouter {
 
 		}
 		return "`^$route$`u";
+	}
+	
+	
+	public function get($route, $target, $name = null) {
+		
+		$this->map($_GET, $route, $target, $name = null);
+	}
+	
+	
+	public function post($route, $target, $name = null) {
+		
+		$this->map($_POST, $route, $target, $name = null);
 	}
 }
