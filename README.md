@@ -1,6 +1,48 @@
 # AltoRouter [![Build Status](https://api.travis-ci.org/dannyvankooten/AltoRouter.png)](http://travis-ci.org/dannyvankooten/AltoRouter) [![Latest Stable Version](https://poser.pugx.org/altorouter/altorouter/v/stable.svg)](https://packagist.org/packages/altorouter/altorouter) [![License](https://poser.pugx.org/altorouter/altorouter/license.svg)](https://packagist.org/packages/altorouter/altorouter) [![Code Climate](https://codeclimate.com/github/dannyvankooten/AltoRouter/badges/gpa.svg)](https://codeclimate.com/github/dannyvankooten/AltoRouter) [![Test Coverage](https://codeclimate.com/github/dannyvankooten/AltoRouter/badges/coverage.svg)](https://codeclimate.com/github/dannyvankooten/AltoRouter)
 AltoRouter is a small but powerful routing class for PHP 5.3+, heavily inspired by [klein.php](https://github.com/chriso/klein.php/).
 
+> ## This fork Fixed trailing slash issue.
+> ### Now you need not to worry about user forgot trailing slash to uri.
+
+```php
+
+$router->map( 'GET', '/tests' , function()  {
+
+	echo 'Hello world.';
+  
+});
+
+or 
+
+$router->map( 'GET', '/tests/' , function()  {
+
+	echo 'Hello world.';
+  
+});
+
+### Both same, use any one. will save half time and file size. ###
+
+```
+
+
+> ## Also added support for call direct get or post request method rather map on router object.
+> ### Hope this will save time and more verbose.
+
+```php
+
+$router->get('/test_get' , function()  {
+
+	echo 'Hello world. from GET Request Method';
+  
+});	
+
+$router->post('/test_post' , function()  {
+
+	echo 'Hello world. from POST Request Method';
+  
+});	
+```
+
 ```php
 $router = new AltoRouter();
 
